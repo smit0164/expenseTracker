@@ -1,76 +1,60 @@
 import React from 'react';
-import { Link } from 'react-router'; // use react-router-dom, not react-router
-import Header from './Header';
-import { useSelector, useDispatch } from 'react-redux'; // Assuming you have a Redux store set up
-import { useEffect,useState } from 'react';
-import { fetchGroups } from '../features/groupSlice';
-import { fetchExpenses } from '../features/expenseSlice';
-import MonthlyPieChart from './MonthlyPieChart';
-import ExpenseTrendChart from './ExpenseTrendChart'
+import { Link } from 'react-router'; 
+import { useDispatch } from 'react-redux';
+import { downloadPdf, fetchExpenses } from '../features/expenseSlice';
+import GroupWisePieChart from './GroupWisePieChart';
+import { downloadGroupWiseExpenses } from '../features/expenseSlice'
+import MonthlyExpense from './MonthlyExpense';
 const Dashboard = () => {
   const dispatch = useDispatch();
 
-
-  const handleDownloadPdf = () => {
-    console.log("hii");
-    // Update this to the full URL of your Laravel backend API
-    window.location.href = 'http://localhost:8000/api/download-expense-pdf'; // Laravel backend URL
-  };
-  
-
-  useEffect(() => {
-    dispatch(fetchGroups());
-    dispatch(fetchExpenses());
-  }, [dispatch]);
-
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
-      {/* Sidebar */}
-      <aside className="w-full md:w-1/4 bg-white shadow-lg p-6 hidden md:block">
-        <Header />
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1 p-6 md:p-12 max-w-7xl mx-auto">
-        {/* Title and Buttons */}
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-semibold text-gray-800">Dashboard</h1>
-
-          <div className="flex gap-6">
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      <main className="flex-1 p-4 sm:p-6 lg:p-8 w-full max-w-7xl mx-auto">
+        {/* Title and Actions */}
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-800">Dashboard</h1>
+          <div className="flex flex-col sm:flex-row gap-4 sm:gap-6">
             <Link
               to="/manage-expense"
-              className="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-lg text-base font-semibold shadow-md transition duration-300"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 sm:px-5 py-2 rounded-md font-medium shadow text-sm sm:text-base text-center"
             >
               Manage Expense
             </Link>
             <Link
               to="/manage-group"
-              className="bg-white hover:bg-gray-100 text-indigo-600 border border-indigo-600 px-6 py-3 rounded-lg text-base font-semibold shadow-md transition duration-300"
+              className="bg-white text-indigo-600 border border-indigo-600 hover:bg-indigo-50 px-4 sm:px-5 py-2 rounded-md font-medium shadow text-sm sm:text-base text-center"
             >
               Manage Group
             </Link>
-
-            {/* Download PDF Button */}
             <button
-  onClick={() => handleDownloadPdf()} // Correctly invoking the function
-  className="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg text-base font-semibold shadow-md transition duration-300"
->
-  Download Expense PDF
-</button>
-
-
+              onClick={() => dispatch(downloadPdf())}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 sm:px-5 py-2 rounded-md font-medium shadow text-sm sm:text-base"
+            >
+              Download Expense PDF
+            </button>
+            <button
+              onClick={() => dispatch(downloadGroupWiseExpenses())}
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 sm:px-5 py-2 rounded-md font-medium shadow text-sm sm:text-base"
+            >
+              Export Group-wise Expense
+            </button>
           </div>
         </div>
 
-        {/* Expense Distribution - Pie Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-lg mb-8">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4">Expense Distribution</h2>
-          <MonthlyPieChart />
-        </div>
+        {/* Charts Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {/* Pie Chart */}
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Group-wise Expense Distribution</h2>
+            <GroupWisePieChart />
+          </div>
 
-        {/* Expense Trend Over Time - Line Chart */}
-        <div className="bg-white p-6 rounded-lg shadow-lg">
-          <ExpenseTrendChart />
+          {/* Bar Chart */}
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
+            <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Monthly Expense Chart</h2>
+            <MonthlyExpense />
+          </div>
         </div>
       </main>
     </div>
@@ -78,3 +62,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+

@@ -1,15 +1,13 @@
-import React from 'react'
-import Header from './Header';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import Header from './SideBar';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchExpenses } from '../features/expenseSlice';
-import { Link,useNavigate } from 'react-router'
-import { fetchGroups } from '../features/groupSlice';
-import  {deleteExpense} from '../features/expenseSlice';
+import { deleteExpense } from '../features/expenseSlice';
+import { Link, useNavigate } from 'react-router';
+
 const ManageExpense = () => {
     const dispatch = useDispatch();
     const { expenses, loading: expensesLoading, error: expenseError } = useSelector((state) => state.expense);
-    const { groups} = useSelector((state) => state.group);
+    const { groups } = useSelector((state) => state.group);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedExpenseId, setSelectedExpenseId] = useState(null);
     const navigate = useNavigate();
@@ -17,17 +15,13 @@ const ManageExpense = () => {
     const handleEdit = (id) => {
         navigate(`/edit-expense/${id}`);
     };
-    useEffect(() => {
-        dispatch(fetchExpenses());
-        dispatch(fetchGroups())
-    }, [])
+
     const handleDelete = (id) => {
         setSelectedExpenseId(id);
         setIsModalOpen(true);
     };
 
     const confirmDelete = async () => {
-        console.log("Deleting expense", selectedExpenseId);
         try {
             await dispatch(deleteExpense(selectedExpenseId)).unwrap(); 
         } catch (error) {
@@ -35,34 +29,26 @@ const ManageExpense = () => {
         }
         setIsModalOpen(false); 
     };
-    
 
     return (
-        <div className="min-h-screen bg-gray-100 flex">
-            {/* Sidebar */}
-            <aside className="w-1/4 bg-white shadow-md p-6 hidden md:block">
-                <Header />
-            </aside>
-
-            {/* Main Content */}
+        <div className="min-h-screen bg-gray-100 flex flex-col lg:flex-row">
+         
             <main className="flex-1 p-6 sm:p-10 max-w-6xl mx-auto">
-                <div className="mb-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <Link
-                            to="/dashboard"
-                            className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
-                        >
-                            ← Back to Dashboard
-                        </Link>
-                        <Link
-                            to="/create-expense"
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition"
-                        >
-                            + Create Expense
-                        </Link>
-                    </div>
-                    <h1 className="text-3xl font-bold text-gray-800">Manage Expense</h1>
+                <div className="mb-6 flex justify-between items-center flex-wrap gap-4">
+                    <Link
+                        to="/dashboard"
+                        className="bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition"
+                    >
+                        ← Back to Dashboard
+                    </Link>
+                    <Link
+                        to="/create-expense"
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2 rounded-lg font-medium transition"
+                    >
+                        + Create Expense
+                    </Link>
                 </div>
+                <h1 className="text-3xl font-bold text-gray-800">Manage Expense</h1>
 
                 {/* Loading Spinner */}
                 {expensesLoading ? (
@@ -103,7 +89,6 @@ const ManageExpense = () => {
                                             <div className="flex space-x-4">
                                                 {/* Edit */}
                                                 <button onClick={() => handleEdit(expense.id)} className="text-indigo-600 hover:text-indigo-800">
-
                                                     <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                                         <path d="M17.75 3.25a2.25 2.25 0 1 0-3.181 3.181l-7.52 7.52a.75.75 0 0 0-.171.38l-1.548 4.64a.75.75 0 0 0 .907.907l4.64-1.548a.75.75 0 0 0 .38-.171l7.52-7.52a2.25 2.25 0 0 0 0-3.181z" />
                                                     </svg>
@@ -129,9 +114,11 @@ const ManageExpense = () => {
                     <div className="text-center text-gray-500 text-lg py-10">No expenses recorded.</div>
                 )}
             </main>
+
+            {/* Modal for Confirm Delete */}
             {isModalOpen && (
-                <div className="fixed inset-0 backdrop-blur-xs flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg w-80 shadow-lg">
+                <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg w-80 sm:w-96 shadow-lg">
                         <h2 className="text-lg font-semibold text-gray-800 mb-4">Are you sure you want to delete this expense?</h2>
                         <div className="flex justify-end gap-4">
                             <button
@@ -150,8 +137,6 @@ const ManageExpense = () => {
                     </div>
                 </div>
             )}
-
-
         </div>
     );
 };

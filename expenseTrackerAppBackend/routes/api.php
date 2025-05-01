@@ -22,6 +22,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/deleteGroup/{id}',[GroupController::class, 'delete']);
     Route::delete('/deleteExpense/{id}',[ExpenseController::class, 'delete']);
     Route::put('/updateExpense/{id}', [ExpenseController::class, 'update']);
-   
+    Route::get('/download-expense-pdf', [ExpenseController::class, 'downloadExpensePdf']);
+    Route::get('/export/group-wise-expenses', [ExpenseController::class, 'exportGroupWiseExpense']);
+
 });
-Route::get('/download-expense-pdf', [ExpensePdfController::class, 'downloadExpensePdf'])->name('download.expense.pdf');

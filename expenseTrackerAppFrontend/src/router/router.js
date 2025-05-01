@@ -9,23 +9,34 @@ import Expense from "../components/Expense";
 import ManageGroup from "../components/ManageGroup";
 import ManageExpense from "../components/ManageExpense";
 import EditExpense from "../components/EditExpense";
+import Layout from "../Layouts/Layout";
   let router = createBrowserRouter([
     {
       path: "/",
       Component: AuthLayout,
       children:[
         {
-          path: "/dashboard",
-          Component: Dashboard,
+           Component:Layout,
+           children:[
+            {
+               path:"/dashboard",
+               Component:Dashboard
+            },
+            {
+              path:'/manage-expense',
+              Component:ManageExpense
+            },
+            {
+              path:'/create-expense',
+              Component:Expense
+            }
+           ]
         },
         {
             path:'/manage-group',
             Component:ManageGroup
         },
-        {
-          path:'/manage-expense',
-          Component:ManageExpense
-        },
+       
         {
             path:'/edit-expense/:id',
             Component:EditExpense
@@ -34,10 +45,7 @@ import EditExpense from "../components/EditExpense";
           path:'/create-group',
           Component:Group
         },
-        {
-          path:'/create-expense',
-          Component:Expense
-        }
+      
       ]
     },
     {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Header from './Header';
+import Header from './SideBar';
 import { fetchGroups } from '../features/groupSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
@@ -93,10 +93,7 @@ const Expense = () => {
 
     return (
         <div className="min-h-screen flex bg-gray-100">
-            {/* Sidebar */}
-            <aside className="w-25% bg-white shadow-lg p-6 hidden md:block">
-                <Header />
-            </aside>
+        
 
             {/* Main Content */}
             <main className="flex-1 p-8 max-w-7xl mx-auto">

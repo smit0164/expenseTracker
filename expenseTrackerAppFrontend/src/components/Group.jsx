@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { createGroup } from '../features/groupSlice';
 import { useNavigate } from 'react-router';
-import Header from './Header';
+import Header from './SideBar';
 import {Link} from 'react-router'
 function Group() {
   const dispatch = useDispatch();

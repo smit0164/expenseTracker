@@ -45,7 +45,7 @@ export const fetchExpenses = createAsyncThunk(
     }
 );
 export const deleteExpense= createAsyncThunk(
-    'group/deleteExpense',
+    'expense/deleteExpense',
     async (id , { rejectWithValue }) => {
       try {
          const response = await axiosInstance.delete(`/deleteExpense/${id}`);
@@ -55,7 +55,54 @@ export const deleteExpense= createAsyncThunk(
       }
     }
   );
+export const downloadPdf=createAsyncThunk(
+        'expense/downloadPdf',
+    async(_,{rejectWithValue})=>{
+        try{
+             const response=await axiosInstance.get('/download-expense-pdf',{
+                responseType:'blob',
+             });
+             const blob=new Blob([response.data],{type:'application/pdf'});
+            
+             const url = window.URL.createObjectURL(blob);
+             console.log("url",url);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'expense_report.pdf');
+            document.body.appendChild(link);
+            link.click();
 
+            link.remove();
+            window.URL.revokeObjectURL(url);
+
+            return true; // indicate success
+        }catch(err){
+            return rejectWithValue(err.response?.data || 'Something went wrong');
+        }
+    }       
+)
+export const downloadGroupWiseExpenses = createAsyncThunk(
+    'expense/downloadGroupWiseExpenses',
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await axiosInstance.get('/export/group-wise-expenses', {
+                responseType: 'blob',
+            });
+            const blob = new Blob([response.data], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', 'group_wise_expenses.xlsx');
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(url);
+            return true; // indicate success
+        } catch (err) {
+            return rejectWithValue(err.response?.data || 'Something went wrong');
+        }
+    }
+);
 export const expenseSlice = createSlice({
     name: 'group',
     initialState: {
@@ -105,26 +152,46 @@ export const expenseSlice = createSlice({
                 state.loading=false;
                 state.error=action.payload.error;
             })
-            builder
+        builder
             .addCase(updateExpense.pending, (state) => {
                 state.loading = true;
                 state.error = null;
             })
             .addCase(updateExpense.fulfilled, (state, action) => {
-                
                 state.loading = false;
                 const updatedExpense = action.payload.expense;
-                console.log("updatedExpense",updatedExpense);
                 state.expenses = state.expenses.map((expense) =>
                     expense.id === updatedExpense.id ? updatedExpense : expense
                 );
-                console.log("state expense",state.expenses);
             })
             .addCase(updateExpense.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload;
             });
-        
+        builder
+            .addCase(downloadPdf.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(downloadPdf.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(downloadPdf.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+        builder
+            .addCase(downloadGroupWiseExpenses.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(downloadGroupWiseExpenses.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(downloadGroupWiseExpenses.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
     },
 
     });

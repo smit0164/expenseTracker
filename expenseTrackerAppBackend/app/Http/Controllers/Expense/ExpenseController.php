@@ -7,6 +7,11 @@ use Illuminate\Http\Request;
 use App\Http\Requests\Expense\StoreExpenseRequest;
 use App\Models\Expense;
 use App\Models\User;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Carbon;
+use App\Exports\GroupWiseExpenseExport;
+use Maatwebsite\Excel\Facades\Excel;
+
 class ExpenseController extends Controller
 {
     public function store(StoreExpenseRequest $request)
@@ -114,6 +119,39 @@ class ExpenseController extends Controller
             ], 500);
         }
     }
-    
+    public function downloadExpensePdf()
+    {
+        try {
+          
+            $user = auth()->user(); // or however you get the user
+
+            $groups = $user->groups()->with('expenses')->get();
+           $pdf = Pdf::loadView('pdf.expense_report', [
+                'user' => $user,
+                'groups' => $groups,
+            ]);
+        
+            return $pdf->download('expense-report.pdf');
+           
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to generate PDF',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+     
+    public function exportGroupWiseExpense()
+    {
+        try {
+            $user = auth()->user(); 
+            return Excel::download(new GroupWiseExpenseExport($user), 'group-wise-expense.xlsx');
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to generate Excel file',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
     
 }

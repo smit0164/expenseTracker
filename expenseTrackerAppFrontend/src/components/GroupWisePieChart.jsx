@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from 'react';
+import React, {useMemo } from 'react';
 import { Pie } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -6,29 +6,21 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { useSelector, useDispatch } from 'react-redux';
-import { fetchGroups } from '../features/groupSlice';
+import { useSelector} from 'react-redux';
+
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-const MonthlyPieChart = () => {
-  const dispatch = useDispatch();
+const GroupWisePieChart = () => {
+ 
   const { groups } = useSelector((state) => state.group);
-  const { expenses } = useSelector((state) => state.expense); // Assuming you have an expense slice
-
-  useEffect(() => {
-    dispatch(fetchGroups());
-  }, [dispatch]);
-
-  console.log("groups", groups);
-  console.log("expenses", expenses);
-
-  // Adjusted to group expenses by category
+  const { expenses } = useSelector((state) => state.expense);
+  
   const categoryData = useMemo(() => {
     const categoryMap = {};
 
     // Loop through expenses and match each expense with the corresponding group
-    expenses.forEach(expense => {
+    const p=expenses.forEach(expense => {
       // Find the group by matching the group_id in the expense with the group's id
       const group = groups.find(g => g.id === expense.group_id);
       
@@ -43,7 +35,7 @@ const MonthlyPieChart = () => {
         }
       }
     });
-
+    console.log("p",p);
     // Convert the categoryMap into arrays for labels and data
     const labels = Object.keys(categoryMap); 
     const data = Object.values(categoryMap);
@@ -93,4 +85,4 @@ const MonthlyPieChart = () => {
   );
 };
 
-export default MonthlyPieChart;
+export default GroupWisePieChart;

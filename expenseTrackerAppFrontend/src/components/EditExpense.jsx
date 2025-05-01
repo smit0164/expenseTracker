@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchExpenses,updateExpense } from '../features/expenseSlice';
 import { useEffect, useState } from 'react';
-import Header from './Header';
+import Header from './SideBar';
 import { fetchGroups } from '../features/groupSlice'
 const EditExpense = () => {
     const { id } = useParams();

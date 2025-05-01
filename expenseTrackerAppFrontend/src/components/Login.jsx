@@ -52,7 +52,7 @@ const Login = () => {
       navigate('/dashboard'); // Redirect to dashboard
     } catch (err) {
 
-
+     console.log(err);
       // Set error messages from backend response
       if (err.errors) {
         if (err.errors.email) {
@@ -84,13 +84,8 @@ const Login = () => {
           <h2 className="text-3xl font-semibold text-gray-800 mb-2">Welcome Back</h2>
           <p className="text-gray-600">Sign in to your account</p>
         </div>
-        {
-          loginerror &&(
-           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
-               {loginerror}
-            </div>
-          )
-        }
+
+
 
         {error.invalidcredentials && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-lg text-sm">
